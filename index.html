@@ -1424,22 +1424,22 @@
       }
     });
 
-    // ── Dólar blue (API pública argentina) ─────────────────────
+    // ── Cotización USD (dolarapi.com + fallback) ────────────────
     (async function loadUSD() {
-      const prices = { '3n': 210000, '5n': 315000, '6n': 342000 };
+      const FALLBACK_RATE = 1420; // cotización oficial venta de referencia
       const labels = {
-        es: { per: 'noche', total: 'Total', note: 'dólar blue, referencial' },
-        en: { per: 'night', total: 'Total', note: 'blue dollar, reference' },
-        pt: { per: 'noite', total: 'Total', note: 'dólar blue, referencial' }
+        es: { per: 'noche', total: 'Total', note: 'cotización referencial' },
+        en: { per: 'night', total: 'Total', note: 'reference rate' },
+        pt: { per: 'noite', total: 'Total', note: 'cotização de referência' }
       };
-      let rate = null;
+      let rate = FALLBACK_RATE;
       try {
-        const res = await fetch('https://dolarapi.com/v1/dolares/blue');
+        const res = await fetch('https://dolarapi.com/v1/dolares/oficial');
         if (res.ok) {
           const data = await res.json();
-          rate = data.venta;
+          if (data.venta && data.venta > 0) rate = data.venta;
         }
-      } catch(e) { /* silencioso si falla */ }
+      } catch(e) { /* usa fallback */ }
 
       window._usdRate = rate;
       window._usdLabels = labels;
@@ -1447,14 +1447,13 @@
     })();
 
     function renderUSD() {
-      const rate = window._usdRate;
+      const rate = window._usdRate || 1420;
       const lang = window._currentLang || 'es';
-      const labels = (window._usdLabels || {})[lang] || window._usdLabels?.es;
+      const labels = (window._usdLabels || {})[lang] || { per: 'noche', total: 'Total', note: 'referencial' };
       const prices = { '3n': { night: 70000, total: 210000 }, '5n': { night: 63000, total: 315000 }, '6n': { night: 57000, total: 342000 } };
       Object.entries(prices).forEach(([key, p]) => {
         const el = document.getElementById('usd-' + key);
         if (!el) return;
-        if (!rate) { el.textContent = ''; el.classList.remove('loading'); return; }
         const nightUSD = Math.round(p.night / rate);
         const totalUSD = Math.round(p.total / rate);
         el.textContent = `≈ USD ${nightUSD}/${labels.per} · ${labels.total} USD ${totalUSD} (${labels.note})`;
