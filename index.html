@@ -741,6 +741,36 @@
     }
     .price-usd.loading { color: var(--text-muted); font-style: italic; }
 
+    /* ============ FLOATING BEE ============ */
+    #floating-bee {
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      font-size: 1.5rem;
+      line-height: 1;
+      transition: left 2.4s cubic-bezier(0.45,0,0.55,1),
+                  top  2.4s cubic-bezier(0.45,0,0.55,1);
+      filter: drop-shadow(0 0 6px rgba(245,166,35,0.5));
+      will-change: left, top;
+      user-select: none;
+    }
+    #floating-bee.scrolling {
+      transition: left 0.15s linear, top 0.15s linear;
+    }
+    .bee-crumb {
+      position: fixed;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(245,166,35,0.65);
+      pointer-events: none;
+      z-index: 9998;
+      animation: bee-crumb-fade 1.1s ease forwards;
+    }
+    @keyframes bee-crumb-fade {
+      0%   { opacity: 0.8; transform: scale(1); }
+      100% { opacity: 0;   transform: scale(0.2); }
+    }
+
     /* ============ RESPONSIVE EXTRAS ============ */
     @media (max-width: 768px) {
       .map-inner { grid-template-columns: 1fr; }
@@ -753,6 +783,9 @@
   </style>
 </head>
 <body>
+
+  <!-- Abejita flotante -->
+  <div id="floating-bee" aria-hidden="true">🐝</div>
 
   <!-- ===== ANNOUNCEMENT ===== -->
   <div class="announcement-bar">
@@ -1845,6 +1878,93 @@
       // ── Recalcular USD con el nuevo idioma ─────────────────
       renderUSD();
     }
+
+    // ── Abejita flotante ──────────────────────────────────
+    (function() {
+      const bee = document.getElementById('floating-bee');
+      if (!bee) return;
+
+      let beeX = 80, beeY = 80;          // posición actual (px desde top-left viewport)
+      let targetX = beeX, targetY = beeY;
+      let crumbTimer = null;
+      let idleTimer  = null;
+      let isScrolling = false;
+      let scrollTimer = null;
+
+      // ── Posicionar abeja
+      function placeBee(x, y, instant) {
+        if (instant) {
+          bee.style.transition = 'none';
+        }
+        bee.style.left = x + 'px';
+        bee.style.top  = y + 'px';
+      }
+
+      // ── Dejar una miga
+      function dropCrumb(x, y) {
+        const c = document.createElement('div');
+        c.className = 'bee-crumb';
+        c.style.left = (x + 10) + 'px';
+        c.style.top  = (y + 10) + 'px';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 1150);
+      }
+
+      // ── Vuelo aleatorio idle
+      function flyRandom() {
+        if (isScrolling) return;
+        const margin = 60;
+        targetX = margin + Math.random() * (window.innerWidth  - margin * 2);
+        targetY = margin + Math.random() * (window.innerHeight - margin * 2);
+        bee.classList.remove('scrolling');
+        bee.style.transition = 'left 2.4s cubic-bezier(0.45,0,0.55,1), top 2.4s cubic-bezier(0.45,0,0.55,1)';
+        bee.style.left = targetX + 'px';
+        bee.style.top  = targetY + 'px';
+
+        // rastro cada 400ms durante el vuelo
+        let crumbCount = 0;
+        clearInterval(crumbTimer);
+        crumbTimer = setInterval(() => {
+          if (crumbCount++ > 5) { clearInterval(crumbTimer); return; }
+          // interpolación aproximada de posición durante transición
+          const prog = Math.min(crumbCount / 6, 1);
+          const cx = beeX + (targetX - beeX) * prog;
+          const cy = beeY + (targetY - beeY) * prog;
+          dropCrumb(cx, cy);
+        }, 390);
+
+        // cuando llega, espera random 1.5-4s y vuela de nuevo
+        const wait = 1500 + Math.random() * 2500;
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+          beeX = targetX; beeY = targetY;
+          flyRandom();
+        }, 2400 + wait);
+      }
+
+      // ── Scroll: la abeja queda fija visualmente (position:fixed ya lo hace)
+      //    solo pausamos el vuelo aleatorio mientras dura el scroll
+      window.addEventListener('scroll', function() {
+        if (!isScrolling) {
+          isScrolling = true;
+          bee.classList.add('scrolling');
+          clearTimeout(idleTimer);
+          clearInterval(crumbTimer);
+        }
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(() => {
+          isScrolling = false;
+          bee.classList.remove('scrolling');
+          beeX = parseFloat(bee.style.left) || beeX;
+          beeY = parseFloat(bee.style.top)  || beeY;
+          flyRandom();
+        }, 600);
+      }, { passive: true });
+
+      // ── Arrancar
+      placeBee(beeX, beeY, true);
+      setTimeout(flyRandom, 1200);
+    })();
 
     // ── Hamburger / Nav drawer ─────────────────────────────
     function toggleDrawer() {
