@@ -757,16 +757,16 @@
     }
     /* Alas */
     .bee-wing-l {
-      transform-origin: 22px 27px;
+      transform-origin: 26px 33px;
       animation: bee-flap 0.14s ease-in-out infinite alternate;
     }
     .bee-wing-r {
-      transform-origin: 26px 27px;
+      transform-origin: 34px 33px;
       animation: bee-flap 0.14s ease-in-out infinite alternate;
     }
     @keyframes bee-flap {
       from { transform: scaleY(1); }
-      to   { transform: scaleY(0.2); }
+      to   { transform: scaleY(0.18); }
     }
     /* Cuerpo leve wobble */
     #floating-bee svg {
@@ -805,31 +805,83 @@
 
   <!-- Abejita flotante -->
   <div id="floating-bee" aria-hidden="true">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 52" width="42" height="42">
-      <!-- Alas -->
-      <ellipse class="bee-wing-l" cx="10" cy="27" rx="12" ry="5" fill="rgba(210,235,255,0.88)" stroke="rgba(140,185,230,0.55)" stroke-width="0.7"/>
-      <ellipse class="bee-wing-r" cx="38" cy="27" rx="12" ry="5" fill="rgba(210,235,255,0.88)" stroke="rgba(140,185,230,0.55)" stroke-width="0.7"/>
-      <!-- Cuerpo -->
-      <ellipse cx="24" cy="35" rx="11" ry="9" fill="#f5a623"/>
-      <!-- Rayas negras -->
-      <path d="M13.5 32.5 Q24 29.5 34.5 32.5" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <path d="M13.2 37 Q24 34 34.8 37" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 68" width="50" height="50">
+      <defs>
+        <radialGradient id="rg-abd" cx="45%" cy="32%" r="60%">
+          <stop offset="0%" stop-color="#ffd040"/>
+          <stop offset="60%" stop-color="#e08a08"/>
+          <stop offset="100%" stop-color="#9a5500"/>
+        </radialGradient>
+        <radialGradient id="rg-tho" cx="40%" cy="30%" r="58%">
+          <stop offset="0%" stop-color="#cc8c18"/>
+          <stop offset="100%" stop-color="#5c3000"/>
+        </radialGradient>
+        <radialGradient id="rg-head" cx="42%" cy="35%" r="58%">
+          <stop offset="0%" stop-color="#ffcc3c"/>
+          <stop offset="100%" stop-color="#b06a00"/>
+        </radialGradient>
+        <linearGradient id="rg-wl" x1="100%" y1="60%" x2="0%" y2="0%">
+          <stop offset="0%" stop-color="rgba(220,242,255,0.96)"/>
+          <stop offset="100%" stop-color="rgba(165,208,248,0.36)"/>
+        </linearGradient>
+        <linearGradient id="rg-wr" x1="0%" y1="60%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="rgba(220,242,255,0.96)"/>
+          <stop offset="100%" stop-color="rgba(165,208,248,0.36)"/>
+        </linearGradient>
+      </defs>
+      <!-- Alas superiores -->
+      <g class="bee-wing-l">
+        <path d="M26 33 Q13 19 2 22 Q-1 29 13 34 Q19 37 26 33Z" fill="url(#rg-wl)" stroke="rgba(115,168,220,0.65)" stroke-width="0.7"/>
+        <line x1="26" y1="33" x2="5" y2="23" stroke="rgba(105,158,210,0.38)" stroke-width="0.5"/>
+        <line x1="24" y1="34" x2="8" y2="29" stroke="rgba(105,158,210,0.28)" stroke-width="0.4"/>
+      </g>
+      <g class="bee-wing-r">
+        <path d="M34 33 Q47 19 58 22 Q61 29 47 34 Q41 37 34 33Z" fill="url(#rg-wr)" stroke="rgba(115,168,220,0.65)" stroke-width="0.7"/>
+        <line x1="34" y1="33" x2="55" y2="23" stroke="rgba(105,158,210,0.38)" stroke-width="0.5"/>
+        <line x1="36" y1="34" x2="52" y2="29" stroke="rgba(105,158,210,0.28)" stroke-width="0.4"/>
+      </g>
+      <!-- Alas inferiores -->
+      <ellipse cx="19" cy="39" rx="8.5" ry="3.4" fill="rgba(205,230,255,0.66)" stroke="rgba(115,168,220,0.42)" stroke-width="0.5" transform="rotate(-10,19,39)"/>
+      <ellipse cx="41" cy="39" rx="8.5" ry="3.4" fill="rgba(205,230,255,0.66)" stroke="rgba(115,168,220,0.42)" stroke-width="0.5" transform="rotate(10,41,39)"/>
+      <!-- Abdomen -->
+      <path d="M19 50 Q18 61 30 65 Q42 61 41 50 Q41 40 30 39 Q19 40 19 50Z" fill="url(#rg-abd)"/>
+      <!-- Rayas -->
+      <path d="M19.5 45.5 Q30 43 40.5 45.5" stroke="#191100" stroke-width="4" fill="none"/>
+      <path d="M19 51.5 Q30 49 41 51.5" stroke="#191100" stroke-width="4" fill="none"/>
+      <path d="M19.5 57.5 Q30 55 40.5 57.5" stroke="#191100" stroke-width="3.5" fill="none"/>
+      <!-- Brillo abdomen -->
+      <ellipse cx="25" cy="43" rx="5" ry="2.8" fill="rgba(255,248,160,0.17)" transform="rotate(-20,25,43)"/>
       <!-- Aguijón -->
-      <ellipse cx="24" cy="44" rx="2.2" ry="1.4" fill="#c47d00"/>
+      <path d="M30 64.5 L27.5 62.5 L32.5 62.5Z" fill="#7a4000"/>
+      <!-- Tórax -->
+      <ellipse cx="30" cy="37" rx="10" ry="8.5" fill="url(#rg-tho)"/>
+      <path d="M21 35 Q30 32 39 35" stroke="rgba(255,200,50,0.24)" stroke-width="1.2" fill="none"/>
+      <path d="M21 38.5 Q30 35.5 39 38.5" stroke="rgba(255,200,50,0.18)" stroke-width="1" fill="none"/>
+      <!-- Patas (3 pares, articuladas) -->
+      <path d="M22 32 L15 39 L10 46" stroke="#2c1800" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M38 32 L45 39 L50 46" stroke="#2c1800" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M21 37 L14 44 L10 52" stroke="#2c1800" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M39 37 L46 44 L50 52" stroke="#2c1800" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M21 42 L14 49 L12 57" stroke="#2c1800" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M39 42 L46 49 L48 57" stroke="#2c1800" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       <!-- Cabeza -->
-      <circle cx="24" cy="20" r="7.5" fill="#f5a623"/>
-      <!-- Ojos -->
-      <circle cx="21" cy="19" r="1.8" fill="#111"/>
-      <circle cx="27" cy="19" r="1.8" fill="#111"/>
-      <circle cx="21.5" cy="18.3" r="0.6" fill="#fff"/>
-      <circle cx="27.5" cy="18.3" r="0.6" fill="#fff"/>
-      <!-- Sonrisa -->
-      <path d="M21 22 Q24 24.5 27 22" stroke="#111" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+      <circle cx="30" cy="23" r="10" fill="url(#rg-head)"/>
+      <path d="M21 21 Q30 18 39 21" stroke="rgba(255,215,60,0.24)" stroke-width="1.2" fill="none"/>
+      <!-- Ojos compuestos -->
+      <ellipse cx="24.5" cy="22" rx="4" ry="4.5" fill="#080808"/>
+      <ellipse cx="35.5" cy="22" rx="4" ry="4.5" fill="#080808"/>
+      <!-- Reflejo ojos -->
+      <circle cx="23" cy="20" r="1.6" fill="rgba(255,255,255,0.62)"/>
+      <circle cx="34" cy="20" r="1.6" fill="rgba(255,255,255,0.62)"/>
+      <circle cx="25.5" cy="23.5" r="0.7" fill="rgba(255,255,255,0.26)"/>
+      <circle cx="36.5" cy="23.5" r="0.7" fill="rgba(255,255,255,0.26)"/>
       <!-- Antenas -->
-      <path d="M21 13.5 Q18.5 9 15.5 7" stroke="#111" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <circle cx="15.5" cy="7" r="2.2" fill="#111"/>
-      <path d="M27 13.5 Q29.5 9 32.5 7" stroke="#111" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-      <circle cx="32.5" cy="7" r="2.2" fill="#111"/>
+      <path d="M26 14 Q22 8 18 5" stroke="#1a0a00" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <circle cx="22" cy="10" r="1.1" fill="#1a0a00"/>
+      <circle cx="18" cy="5" r="2.5" fill="#1a0a00"/>
+      <path d="M34 14 Q38 8 42 5" stroke="#1a0a00" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <circle cx="38" cy="10" r="1.1" fill="#1a0a00"/>
+      <circle cx="42" cy="5" r="2.5" fill="#1a0a00"/>
     </svg>
   </div>
 
