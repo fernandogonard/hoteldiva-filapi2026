@@ -653,6 +653,32 @@
     }
     .social-link:hover { border-color: var(--amber); color: var(--amber); background: rgba(245,166,35,0.07); }
 
+    /* ============ LANG SWITCHER ============ */
+    .lang-switcher {
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 50px; padding: 4px 6px;
+    }
+    .lang-btn {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px;
+      color: var(--text-muted); background: none; border: none;
+      padding: 4px 10px; border-radius: 50px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn.active {
+      background: var(--amber); color: #000;
+    }
+    .lang-btn:hover:not(.active) { color: #fff; }
+
+    /* ============ USD PRICE ============ */
+    .price-usd {
+      font-size: 0.78rem; color: #7dd3a8;
+      margin-top: 3px; font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+    .price-usd.loading { color: var(--text-muted); font-style: italic; }
+
     /* ============ RESPONSIVE EXTRAS ============ */
     @media (max-width: 768px) {
       .map-inner { grid-template-columns: 1fr; }
@@ -685,11 +711,14 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Reservar por WhatsApp
         </a>
+        <div class="lang-switcher">
+          <button class="lang-btn active" onclick="setLang('es')" aria-label="Español">ES</button>
+          <button class="lang-btn" onclick="setLang('en')" aria-label="English">EN</button>
+          <button class="lang-btn" onclick="setLang('pt')" aria-label="Português">PT</button>
+        </div>
       </div>
     </div>
   </header>
-
-  <!-- ===== HERO ===== -->
   <section class="hero">
     <div class="container" style="position:relative;">
       <!-- Decoración -->
@@ -842,6 +871,7 @@
               <span class="price-suffix">/ noche · 2 personas</span>
             </div>
             <div class="price-total">Total habitación: <strong>$210.000</strong> en efectivo</div>
+            <div class="price-usd loading" id="usd-3n">≈ USD cargando...</div>
           </div>
           <ul class="package-includes">
             <li><span class="check-icon">✓</span> 3 noches — apertura y primeras jornadas</li>
@@ -867,6 +897,7 @@
               <span class="price-suffix">/ noche · 2 personas</span>
             </div>
             <div class="price-total">Total habitación: <strong>$315.000</strong> en efectivo</div>
+            <div class="price-usd loading" id="usd-5n">≈ USD cargando...</div>
             <div class="price-saving">
               ✅ Ahorrás $35.000 vs tarifa estándar
             </div>
@@ -896,6 +927,7 @@
               <span class="price-suffix">/ noche · 2 personas</span>
             </div>
             <div class="price-total">Total habitación: <strong>$342.000</strong> en efectivo</div>
+            <div class="price-usd loading" id="usd-6n">≈ USD cargando...</div>
             <div class="price-saving">
               ✅ Ahorrás $78.000 vs tarifa estándar
             </div>
@@ -1391,6 +1423,163 @@
         document.body.style.overflow = '';
       }
     });
+
+    // ── Dólar blue (API pública argentina) ─────────────────────
+    (async function loadUSD() {
+      const prices = { '3n': 210000, '5n': 315000, '6n': 342000 };
+      const labels = {
+        es: { per: 'noche', total: 'Total', note: 'dólar blue, referencial' },
+        en: { per: 'night', total: 'Total', note: 'blue dollar, reference' },
+        pt: { per: 'noite', total: 'Total', note: 'dólar blue, referencial' }
+      };
+      let rate = null;
+      try {
+        const res = await fetch('https://dolarapi.com/v1/dolares/blue');
+        if (res.ok) {
+          const data = await res.json();
+          rate = data.venta;
+        }
+      } catch(e) { /* silencioso si falla */ }
+
+      window._usdRate = rate;
+      window._usdLabels = labels;
+      renderUSD();
+    })();
+
+    function renderUSD() {
+      const rate = window._usdRate;
+      const lang = window._currentLang || 'es';
+      const labels = (window._usdLabels || {})[lang] || window._usdLabels?.es;
+      const prices = { '3n': { night: 70000, total: 210000 }, '5n': { night: 63000, total: 315000 }, '6n': { night: 57000, total: 342000 } };
+      Object.entries(prices).forEach(([key, p]) => {
+        const el = document.getElementById('usd-' + key);
+        if (!el) return;
+        if (!rate) { el.textContent = ''; el.classList.remove('loading'); return; }
+        const nightUSD = Math.round(p.night / rate);
+        const totalUSD = Math.round(p.total / rate);
+        el.textContent = `≈ USD ${nightUSD}/${labels.per} · ${labels.total} USD ${totalUSD} (${labels.note})`;
+        el.classList.remove('loading');
+      });
+    }
+
+    // ── i18n / Selector de idioma ──────────────────────────────
+    const i18n = {
+      es: {
+        heroTitle: 'Tu base perfecta<br/>para el congreso<br/><em>más importante</em> de la apicultura',
+        heroSub: 'Hotel Diva te recibe con comodidad, desayuno buffet y atención premium, a minutos del evento. Paquetes de 3, 5 y 6 noches con fechas exactas del congreso.',
+        heroCta1: 'Ver paquetes y precios',
+        heroCta2: 'Consultar disponibilidad',
+        heroInfo1: 'Mar del Plata, Buenos Aires',
+        heroInfo2: '31 agosto – 6 septiembre 2026',
+        heroInfo3: 'Desayuno buffet incluido',
+        pkgSub: 'Todos incluyen desayuno buffet. Precios en efectivo <strong>por habitación doble (2 personas)</strong>. A mayor estadía, mejor precio por noche.',
+        pkg1nights: '📅 3 Noches', pkg1title: 'Paquete Apertura', pkg1dates: '31 de agosto → 3 de septiembre',
+        pkg2nights: '📅 5 Noches', pkg2title: 'Paquete Congresista', pkg2dates: '31 de agosto → 5 de septiembre',
+        pkg3nights: '📅 6 Noches', pkg3title: 'Congreso Completo', pkg3dates: '31 de agosto → 6 de septiembre',
+        btnBook: 'Reservar por WhatsApp',
+        btnConsult: 'Consultar este paquete',
+        btnReserve: '¡Reservar este paquete!',
+      },
+      en: {
+        heroTitle: 'Your perfect base<br/>for the most important<br/><em>beekeeping congress</em>',
+        heroSub: 'Hotel Diva welcomes you with comfort, buffet breakfast and premium service, minutes from the event. Packages of 3, 5 and 6 nights with exact congress dates.',
+        heroCta1: 'View packages & prices',
+        heroCta2: 'Check availability',
+        heroInfo1: 'Mar del Plata, Buenos Aires',
+        heroInfo2: 'Aug 31 – Sep 6, 2026',
+        heroInfo3: 'Buffet breakfast included',
+        pkgSub: 'All include buffet breakfast. Prices in cash <strong>per double room (2 people)</strong>. The longer you stay, the better the price per night.',
+        pkg1nights: '📅 3 Nights', pkg1title: 'Opening Package', pkg1dates: 'Aug 31 → Sep 3',
+        pkg2nights: '📅 5 Nights', pkg2title: 'Congress Package', pkg2dates: 'Aug 31 → Sep 5',
+        pkg3nights: '📅 6 Nights', pkg3title: 'Full Congress', pkg3dates: 'Aug 31 → Sep 6',
+        btnBook: 'Book via WhatsApp',
+        btnConsult: 'Inquire about this package',
+        btnReserve: 'Book this package!',
+      },
+      pt: {
+        heroTitle: 'Sua base perfeita<br/>para o congresso<br/><em>mais importante</em> da apicultura',
+        heroSub: 'O Hotel Diva recebe você com conforto, café da manhã buffet e atendimento premium, a minutos do evento. Pacotes de 3, 5 e 6 noites com datas exatas do congresso.',
+        heroCta1: 'Ver pacotes e preços',
+        heroCta2: 'Consultar disponibilidade',
+        heroInfo1: 'Mar del Plata, Buenos Aires',
+        heroInfo2: '31 agosto – 6 setembro 2026',
+        heroInfo3: 'Café da manhã buffet incluído',
+        pkgSub: 'Todos incluem café da manhã buffet. Preços em dinheiro <strong>por quarto duplo (2 pessoas)</strong>. Quanto mais noites, melhor o preço por noite.',
+        pkg1nights: '📅 3 Noites', pkg1title: 'Pacote Abertura', pkg1dates: '31 ago → 3 set',
+        pkg2nights: '📅 5 Noites', pkg2title: 'Pacote Congressista', pkg2dates: '31 ago → 5 set',
+        pkg3nights: '📅 6 Noites', pkg3title: 'Congresso Completo', pkg3dates: '31 ago → 6 set',
+        btnBook: 'Reservar pelo WhatsApp',
+        btnConsult: 'Consultar este pacote',
+        btnReserve: 'Reservar este pacote!',
+      }
+    };
+
+    window._currentLang = 'es';
+
+    function setLang(lang) {
+      window._currentLang = lang;
+      const t = i18n[lang];
+      document.documentElement.lang = lang === 'es' ? 'es-AR' : lang;
+
+      // Botones del switcher
+      document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent.toLowerCase() === lang);
+      });
+
+      // Hero
+      const h1 = document.querySelector('.hero h1');
+      if (h1) h1.innerHTML = t.heroTitle;
+      const heroSub = document.querySelector('.hero-subtitle');
+      if (heroSub) heroSub.textContent = t.heroSub;
+      const ctas = document.querySelectorAll('.hero-ctas a');
+      if (ctas[0]) ctas[0].textContent = t.heroCta1;
+      if (ctas[1]) ctas[1].textContent = t.heroCta2;
+      const infoItems = document.querySelectorAll('.hero-info-item');
+      const infoTexts = [t.heroInfo1, t.heroInfo2, t.heroInfo3];
+      infoItems.forEach((el, i) => {
+        const svg = el.querySelector('svg');
+        el.textContent = infoTexts[i];
+        if (svg) el.prepend(svg);
+      });
+
+      // Packages subtitle
+      const pkgSub = document.querySelector('.packages-section .section-sub');
+      if (pkgSub) pkgSub.innerHTML = t.pkgSub;
+
+      // Package cards
+      const cards = document.querySelectorAll('.package-card');
+      const pkgData = [
+        { nights: t.pkg1nights, title: t.pkg1title, dates: t.pkg1dates },
+        { nights: t.pkg2nights, title: t.pkg2title, dates: t.pkg2dates },
+        { nights: t.pkg3nights, title: t.pkg3title, dates: t.pkg3dates },
+      ];
+      cards.forEach((card, i) => {
+        const d = pkgData[i];
+        const n = card.querySelector('.package-nights'); if (n) n.textContent = d.nights;
+        const tt = card.querySelector('.package-title'); if (tt) tt.textContent = d.title;
+        const dt = card.querySelector('.package-dates'); if (dt) dt.textContent = d.dates;
+        // botones
+        card.querySelectorAll('.package-btn').forEach(btn => {
+          const isMain = btn.classList.contains('btn-amber');
+          if (isMain) {
+            btn.innerHTML = btn.innerHTML.replace(/>[^<]+$/, '>' + t.btnReserve);
+          } else {
+            btn.textContent = t.btnConsult;
+          }
+        });
+      });
+
+      // Header CTA
+      const headerCta = document.querySelector('.header-cta');
+      if (headerCta) {
+        const svg = headerCta.querySelector('svg');
+        headerCta.textContent = t.btnBook;
+        if (svg) headerCta.prepend(svg);
+      }
+
+      // Rerender USD con el nuevo idioma
+      renderUSD();
+    }
   </script>
 </body>
 </html>
