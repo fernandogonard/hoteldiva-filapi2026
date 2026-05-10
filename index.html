@@ -805,7 +805,7 @@
 
   <!-- Abejita flotante -->
   <div id="floating-bee" aria-hidden="true">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 68" width="50" height="50">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 68" width="68" height="68">
       <defs>
         <radialGradient id="rg-abd" cx="45%" cy="32%" r="60%">
           <stop offset="0%" stop-color="#ffd040"/>
@@ -813,8 +813,9 @@
           <stop offset="100%" stop-color="#9a5500"/>
         </radialGradient>
         <radialGradient id="rg-tho" cx="40%" cy="30%" r="58%">
-          <stop offset="0%" stop-color="#cc8c18"/>
-          <stop offset="100%" stop-color="#5c3000"/>
+          <stop offset="0%" stop-color="#e8a820"/>
+          <stop offset="55%" stop-color="#9a5e04"/>
+          <stop offset="100%" stop-color="#3a1800"/>
         </radialGradient>
         <radialGradient id="rg-head" cx="42%" cy="35%" r="58%">
           <stop offset="0%" stop-color="#ffcc3c"/>
@@ -831,18 +832,20 @@
       </defs>
       <!-- Alas superiores -->
       <g class="bee-wing-l">
-        <path d="M26 33 Q13 19 2 22 Q-1 29 13 34 Q19 37 26 33Z" fill="url(#rg-wl)" stroke="rgba(115,168,220,0.65)" stroke-width="0.7"/>
-        <line x1="26" y1="33" x2="5" y2="23" stroke="rgba(105,158,210,0.38)" stroke-width="0.5"/>
-        <line x1="24" y1="34" x2="8" y2="29" stroke="rgba(105,158,210,0.28)" stroke-width="0.4"/>
+        <path d="M26 33 Q13 19 2 22 Q-1 29 13 34 Q19 37 26 33Z" fill="url(#rg-wl)" stroke="rgba(180,220,255,0.85)" stroke-width="1"/>
+        <line x1="26" y1="33" x2="5" y2="23" stroke="rgba(140,195,240,0.55)" stroke-width="0.6"/>
+        <line x1="24" y1="34" x2="8" y2="29" stroke="rgba(140,195,240,0.4)" stroke-width="0.5"/>
+        <line x1="22" y1="35" x2="11" y2="33" stroke="rgba(140,195,240,0.3)" stroke-width="0.4"/>
       </g>
       <g class="bee-wing-r">
-        <path d="M34 33 Q47 19 58 22 Q61 29 47 34 Q41 37 34 33Z" fill="url(#rg-wr)" stroke="rgba(115,168,220,0.65)" stroke-width="0.7"/>
-        <line x1="34" y1="33" x2="55" y2="23" stroke="rgba(105,158,210,0.38)" stroke-width="0.5"/>
-        <line x1="36" y1="34" x2="52" y2="29" stroke="rgba(105,158,210,0.28)" stroke-width="0.4"/>
+        <path d="M34 33 Q47 19 58 22 Q61 29 47 34 Q41 37 34 33Z" fill="url(#rg-wr)" stroke="rgba(180,220,255,0.85)" stroke-width="1"/>
+        <line x1="34" y1="33" x2="55" y2="23" stroke="rgba(140,195,240,0.55)" stroke-width="0.6"/>
+        <line x1="36" y1="34" x2="52" y2="29" stroke="rgba(140,195,240,0.4)" stroke-width="0.5"/>
+        <line x1="38" y1="35" x2="49" y2="33" stroke="rgba(140,195,240,0.3)" stroke-width="0.4"/>
       </g>
       <!-- Alas inferiores -->
-      <ellipse cx="19" cy="39" rx="8.5" ry="3.4" fill="rgba(205,230,255,0.66)" stroke="rgba(115,168,220,0.42)" stroke-width="0.5" transform="rotate(-10,19,39)"/>
-      <ellipse cx="41" cy="39" rx="8.5" ry="3.4" fill="rgba(205,230,255,0.66)" stroke="rgba(115,168,220,0.42)" stroke-width="0.5" transform="rotate(10,41,39)"/>
+      <ellipse cx="19" cy="39" rx="8.5" ry="3.4" fill="rgba(205,230,255,0.72)" stroke="rgba(170,215,250,0.7)" stroke-width="0.8" transform="rotate(-10,19,39)"/>
+      <ellipse cx="41" cy="39" rx="8.5" ry="3.4" fill="rgba(205,230,255,0.72)" stroke="rgba(170,215,250,0.7)" stroke-width="0.8" transform="rotate(10,41,39)"/>
       <!-- Abdomen -->
       <path d="M19 50 Q18 61 30 65 Q42 61 41 50 Q41 40 30 39 Q19 40 19 50Z" fill="url(#rg-abd)"/>
       <!-- Rayas -->
@@ -854,7 +857,7 @@
       <!-- Aguijón -->
       <path d="M30 64.5 L27.5 62.5 L32.5 62.5Z" fill="#7a4000"/>
       <!-- Tórax -->
-      <ellipse cx="30" cy="37" rx="10" ry="8.5" fill="url(#rg-tho)"/>
+      <ellipse cx="30" cy="37" rx="10" ry="8.5" fill="url(#rg-tho)" stroke="rgba(80,40,0,0.5)" stroke-width="0.6"/>
       <path d="M21 35 Q30 32 39 35" stroke="rgba(255,200,50,0.24)" stroke-width="1.2" fill="none"/>
       <path d="M21 38.5 Q30 35.5 39 38.5" stroke="rgba(255,200,50,0.18)" stroke-width="1" fill="none"/>
       <!-- Patas (3 pares, articuladas) -->
