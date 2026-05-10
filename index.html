@@ -746,16 +746,36 @@
       position: fixed;
       z-index: 9999;
       pointer-events: none;
-      font-size: 1.5rem;
       line-height: 1;
       transition: left 2.4s cubic-bezier(0.45,0,0.55,1),
                   top  2.4s cubic-bezier(0.45,0,0.55,1);
-      filter: drop-shadow(0 0 6px rgba(245,166,35,0.5));
+      filter: drop-shadow(0 2px 8px rgba(245,166,35,0.55));
       will-change: left, top;
       user-select: none;
     }
     #floating-bee.scrolling {
       transition: left 0.15s linear, top 0.15s linear;
+    }
+    /* Alas */
+    .bee-wing-l {
+      transform-origin: 22px 20px;
+      animation: bee-flap 0.14s ease-in-out infinite alternate;
+    }
+    .bee-wing-r {
+      transform-origin: 26px 20px;
+      animation: bee-flap 0.14s ease-in-out infinite alternate;
+    }
+    @keyframes bee-flap {
+      from { transform: scaleY(1); }
+      to   { transform: scaleY(0.2); }
+    }
+    /* Cuerpo leve wobble */
+    #floating-bee svg {
+      animation: bee-wobble 2.2s ease-in-out infinite;
+    }
+    @keyframes bee-wobble {
+      0%,100% { transform: rotate(-4deg); }
+      50%     { transform: rotate(4deg); }
     }
     .bee-crumb {
       position: fixed;
@@ -785,7 +805,34 @@
 <body>
 
   <!-- Abejita flotante -->
-  <div id="floating-bee" aria-hidden="true">🐝</div>
+  <div id="floating-bee" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 52" width="42" height="42">
+      <!-- Alas -->
+      <ellipse class="bee-wing-l" cx="13" cy="20" rx="11" ry="5" fill="rgba(210,235,255,0.88)" stroke="rgba(140,185,230,0.55)" stroke-width="0.7"/>
+      <ellipse class="bee-wing-r" cx="35" cy="20" rx="11" ry="5" fill="rgba(210,235,255,0.88)" stroke="rgba(140,185,230,0.55)" stroke-width="0.7"/>
+      <!-- Cuerpo -->
+      <ellipse cx="24" cy="35" rx="11" ry="9" fill="#f5a623"/>
+      <!-- Rayas negras -->
+      <path d="M13.5 32.5 Q24 29.5 34.5 32.5" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M13.2 37 Q24 34 34.8 37" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- Aguijón -->
+      <ellipse cx="24" cy="44" rx="2.2" ry="1.4" fill="#c47d00"/>
+      <!-- Cabeza -->
+      <circle cx="24" cy="20" r="7.5" fill="#f5a623"/>
+      <!-- Ojos -->
+      <circle cx="21" cy="19" r="1.8" fill="#111"/>
+      <circle cx="27" cy="19" r="1.8" fill="#111"/>
+      <circle cx="21.5" cy="18.3" r="0.6" fill="#fff"/>
+      <circle cx="27.5" cy="18.3" r="0.6" fill="#fff"/>
+      <!-- Sonrisa -->
+      <path d="M21 22 Q24 24.5 27 22" stroke="#111" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+      <!-- Antenas -->
+      <path d="M21 13.5 Q18.5 9 15.5 7" stroke="#111" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <circle cx="15.5" cy="7" r="2.2" fill="#111"/>
+      <path d="M27 13.5 Q29.5 9 32.5 7" stroke="#111" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <circle cx="32.5" cy="7" r="2.2" fill="#111"/>
+    </svg>
+  </div>
 
   <!-- ===== ANNOUNCEMENT ===== -->
   <div class="announcement-bar">
